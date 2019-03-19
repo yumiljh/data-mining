@@ -1,7 +1,7 @@
 # Mining Notes
 > 一些个人笔记
 
-## 挖掘频发模式、关联与相关
+## 关联与相关
 - Apriori
 - FP-growth
 - Eclat
