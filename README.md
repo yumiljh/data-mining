@@ -261,6 +261,7 @@ from sklearn.cluster import Kmeans
   - https://www.cnblogs.com/pinard/p/6239403.html
 - 算法实现：
   - Python库：sklearn.decomposition.PCA
+
 ```
 # coding:utf-8
 from sklearn.decomposition import PCA
@@ -270,5 +271,18 @@ pca = PCA(n_components=1)
 X2 = pca.fit_transform(X)
 print X2
 ```
+
+
+
+### 线性判别分析（LDA）
+
+- 用途：降维+分类
+- 算法原理：
+  - https://www.cnblogs.com/pinard/p/6244265.html
+- 算法实现：
+  - Python库：sklearn.discriminant_analysis.LinearDiscriminantAnalysis
+  - https://www.cnblogs.com/pinard/p/6249328.html
+
+
 
 
