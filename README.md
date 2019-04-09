@@ -257,7 +257,8 @@ from sklearn.cluster import Kmeans
 
 - 用途：从高维数据到低维数据的转换，如从二维数据到一维数据
 - 算法原理：
-  - 降维的本质：高维度样本点到低维度超平面的距离足够近,或者说样本点在这个超平面上的投影能尽可能的分开。
+  - 降维的本质：高维度样本点到低维度超平面的距离足够近,或者说样本点在这个超平面上的投影能尽可能的分开（方差）。
+  - PCA选择样本点投影具有最大方差的方向
   - https://www.cnblogs.com/pinard/p/6239403.html
 - 算法实现：
   - Python库：sklearn.decomposition.PCA
@@ -278,11 +279,21 @@ print X2
 
 - 用途：降维+分类
 - 算法原理：
+  - 目测特性：降维时类别之间的距离更明显
+  - LDA选择分类性能最好的投影方向
+  - 与PCA的不同：LDA是有监督的降维方法
   - https://www.cnblogs.com/pinard/p/6244265.html
 - 算法实现：
   - Python库：sklearn.discriminant_analysis.LinearDiscriminantAnalysis
   - https://www.cnblogs.com/pinard/p/6249328.html
 
 
+
+### 奇异值分解(SVD)
+
+- 用途：数据压缩和去噪，可用于特征分解、推荐算法、自然语言处理等
+- 原理：
+  - SVD的性质：降序的奇异值矩阵减少特快，前10%甚至1%的奇异值的和就占了全部的奇异值之和的99%以上的比例。
+  - https://www.cnblogs.com/pinard/p/6251584.html
 
 
