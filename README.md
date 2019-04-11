@@ -301,16 +301,19 @@ print X2
 ```
 import numpy as np
 
-x = np.mat([[0,1],[1,1],[1,0]])
-U, sigma, VT = np.linalg.svd(x)
-V = VT.T
+x = [[1,1,1,0,0],[2,2,2,0,0],[1,1,1,0,0],[5,5,5,0,0],[1,1,0,2,2],[0,0,0,3,3],[0,0,0,1,1]]
+X = np.mat(x)
+U, sigma, VT = np.linalg.svd(X)	#numpy计算出来的VT是V的转置
+
+#numpy计算出来的是Sigma矩阵的对角线压缩数组，要用diag函数还原
 zero_stack = np.zeros(len(V))
 S = np.diag(sigma)
 for i in range(len(V),len(U)):
 	S = np.row_stack((S,zero_stack))
 S = np.mat(S)
-x_origin = U * S * V	#还原原矩阵
-x_similar = U * S * V	#近似矩阵
+
+X_origin = U * S * VT	#还原原矩阵
+X_similar = U[:,0:3] * S[0:3,0:3] * VT[0:3,:]	#近似矩阵
 ```
 
 
