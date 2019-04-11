@@ -295,5 +295,23 @@ print X2
 - 原理：
   - SVD的性质：降序的奇异值矩阵减少特快，前10%甚至1%的奇异值的和就占了全部的奇异值之和的99%以上的比例。
   - https://www.cnblogs.com/pinard/p/6251584.html
+- 实现：
+  - Python库：numpy.linalg.svd
+
+```
+import numpy as np
+
+x = np.mat([[0,1],[1,1],[1,0]])
+U, sigma, VT = np.linalg.svd(x)
+V = VT.T
+zero_stack = np.zeros(len(V))
+S = np.diag(sigma)
+for i in range(len(V),len(U)):
+	S = np.row_stack((S,zero_stack))
+S = np.mat(S)
+x_origin = U * S * V	#还原原矩阵
+x_similar = U * S * V	#近似矩阵
+```
+
 
 
