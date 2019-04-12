@@ -1,7 +1,15 @@
 # Mining Notes
 > 一些个人笔记
 
-## 挖掘频发模式、关联与相关
+## 回归
+
+### 梯度下降
+
+
+
+
+
+## 关联
 
 ### Apriori
 
@@ -13,7 +21,6 @@
   - https://github.com/ymoch/apyori
 
 ```Python
-#-*- coding:utf-8 -*-
 from apyori import apriori
 
 transactions = [['Bread','Milk'],
@@ -104,7 +111,7 @@ def eclat_frequent_itemsets(transactions, minsup):
 
 
 
-## 分类和预测
+## 分类
 
 ### 决策树
 
@@ -251,7 +258,7 @@ from sklearn.cluster import Kmeans
 
 
 
-## 降维分析
+## 降维
 
 ### 主成分分析（PCA）
 
@@ -315,6 +322,7 @@ S = np.mat(S)
 X_origin = U * S * VT	#还原原矩阵
 X_similar = U[:,0:3] * S[0:3,0:3] * VT[0:3,:]	#近似矩阵
 ```
+
 
 
 
