@@ -1,9 +1,111 @@
 # Mining Notes
 > 一些个人笔记
 
+## 测试
+
+### 回归随机集
+
+- sklearn.datasets.make_regression(*n_samples=100*, *n_features=100*, *n_informative=10*, *n_targets=1*, *bias=0.0*, *effective_rank=None*, *tail_strength=0.5*, *noise=0.0*, *shuffle=True*, *coef=False*, *random_state=None*)
+- 源：https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_regression.html#sklearn.datasets.make_regression
+
+```
+import matplotlib.pyplot as plt
+from sklearn.datasets.samples_generator import make_regression
+
+# X为样本特征，Y为样本输出，coef为回归系数，共1000个样本，每个样本1个特征
+X, Y, coef = make_regression(n_samples=1000, n_features=1,noise=10, coef=True)
+plt.scatter(X, Y, color='black')
+plt.plot(X, X*coef, color='blue',linewidth=3)
+```
+
+
+
+### 分类随机集
+
+- sklearn.datasets.make_classification(*n_samples=100*, *n_features=20*, *n_informative=2*, *n_redundant=2*, *n_repeated=0*, *n_classes=2*, *n_clusters_per_class=2*, *weights=None*, *flip_y=0.01*, *class_sep=1.0*, *hypercube=True*, *shift=0.0*, *scale=1.0*, *shuffle=True*, *random_state=None*)
+- 源：https://scikit-learn.org/stable/modules/generated/ sklearn.datasets.make_classification.html
+
+```
+from sklearn.datasets import make_classification
+
+# X为样本特征，Y为样本类别输出，共400个样本，每个样本2个特征，输出有3个类别，没有冗余特征，每个类别一个簇
+X, Y = make_classification(n_samples=400, n_features=2, n_redundant=0, n_clusters_per_class=1, n_classes=3)
+plt.scatter(X[:, 0], X[:, 1], marker='o', c=Y)
+```
+
+
+
+### 聚类随机集
+
+- sklearn.datasets.make_blobs(*n_samples=100*, *n_features=2*, *centers=None*, *cluster_std=1.0*, *center_box=(-10.0*, *10.0)*, *shuffle=True*, *random_state=None*)
+- 源：https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_blobs.html
+
+```
+from sklearn.datasets import make_blobs
+
+# X为样本特征，Y为样本簇类别，共1000个样本，每个样本2个特征，共3个簇，簇中心在[-1,-1], [1,1], [2,2]，簇方差分别为[0.4, 0.5, 0.2]
+X, Y = make_blobs(n_samples=1000, n_features=2, centers=[[-1,-1], [1,1], [2,2]], cluster_std=[0.4, 0.5, 0.2])
+plt.scatter(X[:, 0], X[:, 1], marker='o', c=Y)
+```
+
+
+
+### 正太分布随机集
+
+- sklearn.datasets.make_gaussian_quantiles(*mean=None*, *cov=1.0*, *n_samples=100*, *n_features=2*, *n_classes=3*, *shuffle=True*, *random_state=None*)
+- 源：https://scikit-learn.org/stable/modules/generated/sklearn.datasets.make_gaussian_quantiles.html
+
+```
+from sklearn.datasets import make_gaussian_quantiles
+
+#生成2维正态分布，生成的数据按分位数分成3组，1000个样本,2个样本特征均值为1和2，协方差系数为2
+X, Y = make_gaussian_quantiles(n_samples=1000, n_features=2, n_classes=3, mean=[1,2],cov=2)
+plt.scatter(X[:, 0], X[:, 1], marker='o', c=Y)
+```
+
+
+
 ## 回归
 
 ### 梯度下降
+
+https://www.jianshu.com/p/c7e642877b0e
+
+https://www.cnblogs.com/pinard/p/5970503.html
+
+```
+>>> X
+array([[ 1.19304077],
+       [ 0.94091142],
+       [ 0.02339566],
+       [-0.8981732 ],
+       [ 0.09943588],
+       [ 0.00383871],
+       [-0.80779895],
+       [ 0.87421378],
+       [ 2.3114854 ],
+       [ 0.76986146],
+       [ 0.05000725],
+       [ 1.58109966],
+       [ 2.82690925],
+       [-0.96564311],
+       [-0.16234562],
+       [ 0.43630434],
+       [ 0.76292887],
+       [-2.69115914],
+       [-1.2516014 ],
+       [-1.65755253]])
+>>> Y
+array([ 30.16130442,  36.19745451,  17.10101282,  -7.65571261,
+        26.76324042,  -5.03382704, -21.33951587,  22.67316442,
+        54.01695548,  23.33351057,   2.82356836,  25.49128867,
+        91.31885123, -25.95196596,  10.49228655,   4.74371435,
+         4.69407196, -90.81921826, -13.93506075, -34.20976885])
+>>> coef
+array(24.821098110495655)
+```
+
+
 
 
 
@@ -285,14 +387,47 @@ print X2
 ### 线性判别分析（LDA）
 
 - 用途：降维+分类
+
 - 算法原理：
+
   - 目测特性：降维时类别之间的距离更明显
   - LDA选择分类性能最好的投影方向
   - 与PCA的不同：LDA是有监督的降维方法
   - https://www.cnblogs.com/pinard/p/6244265.html
+
 - 算法实现：
+
   - Python库：sklearn.discriminant_analysis.LinearDiscriminantAnalysis
   - https://www.cnblogs.com/pinard/p/6249328.html
+
+  ```
+  import numpy as np
+  import matplotlib.pyplot as plt
+  from mpl_toolkits.mplot3d import Axes3D
+  from sklearn.datasets.samples_generator import make_classification
+  
+  X, y = make_classification(n_samples=1000, n_features=3, n_redundant=0, n_classes=3, n_informative=2,n_clusters_per_class=1,class_sep =0.5, random_state =10)
+  fig = plt.figure(1)
+  ax = Axes3D(fig, rect=[0, 0, 1, 1], elev=30, azim=20)
+  ax.scatter(X[:, 0], X[:, 1], X[:, 2],marker='o',c=y)
+  
+  from sklearn.decomposition import PCA
+  pca = PCA(n_components=2)
+  pca.fit(X)
+  print pca.explained_variance_ratio_
+  print pca.explained_variance_
+  X_new = pca.transform(X)
+  plt.figure(2)
+  plt.scatter(X_new[:, 0], X_new[:, 1],marker='o',c=y)
+  
+  from sklearn.discriminant_analysis import LinearDiscriminantAnalysis
+  lda = LinearDiscriminantAnalysis(n_components=2)
+  lda.fit(X,y)
+  X_new = lda.transform(X)
+  plt.figure(3)
+  plt.scatter(X_new[:, 0], X_new[:, 1],marker='o',c=y)
+  plt.show()
+  ```
 
 
 
@@ -322,7 +457,4 @@ S = np.mat(S)
 X_origin = U * S * VT	#还原原矩阵
 X_similar = U[:,0:3] * S[0:3,0:3] * VT[0:3,:]	#近似矩阵
 ```
-
-
-
 
