@@ -69,9 +69,20 @@ plt.scatter(X[:, 0], X[:, 1], marker='o', c=Y)
 
 ### 梯度下降
 
-https://www.jianshu.com/p/c7e642877b0e
+- 算法原理：
+  - https://www.jianshu.com/p/c7e642877b0e
+  - https://www.cnblogs.com/pinard/p/5970503.html
+- 分类：
+  - 批量梯度下降
+  - 随机梯度下降
+  - 小批量梯度下降
+- 
 
-https://www.cnblogs.com/pinard/p/5970503.html
+```
+
+```
+
+
 
 ```
 >>> X
@@ -104,8 +115,6 @@ array([ 30.16130442,  36.19745451,  17.10101282,  -7.65571261,
 >>> coef
 array(24.821098110495655)
 ```
-
-
 
 
 
