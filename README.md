@@ -70,51 +70,117 @@ plt.scatter(X[:, 0], X[:, 1], marker='o', c=Y)
 ### 梯度下降
 
 - 算法原理：
+  - 偏导数 --> 梯度 --> 梯度下降（/上升）方向就是最优解存在方向 --> 梯度向量——数学的诠释方式
   - https://www.jianshu.com/p/c7e642877b0e
   - https://www.cnblogs.com/pinard/p/5970503.html
 - 分类：
-  - 批量梯度下降
-  - 随机梯度下降
+  - 批量梯度下降（）
+  - 随机梯度下降（）
   - 小批量梯度下降
-- 
 
 ```
+def error_function(theta, X, y):
+	diff = np.dot(X, theta) - y
+	m = len(X)
+	return (1.0 / (2 * m)) * np.dot(np.transpose(diff), diff)
 
+def BGD_gradient_function(theta, X, y):
+	diff = np.dot(X, theta) - y
+	m = len(X)
+	return (1.0 / m) * np.dot(np.transpose(X),diff)
+
+def SGD_gradient_function(theta, X, y):
+	m = len(X)
+	i = np.random.randint(0, m)
+	diff = np.dot(X[i], theta) - y[i]
+	return (np.transpose(X[i]) * diff).reshape(-1,1)
+
+def gradient_descent(init_theta, X, y, alpha, BGD_SGD = False):
+	theta = init_theta
+	gradient_function = lambda theta, X, y: SGD_gradient_function(theta, X, y) if BGD_SGD else BGD_gradient_function(theta, X, y)
+	gradient = gradient_function(theta, X, y)
+	while not np.all(np.absolute(gradient) <= EPSILON):
+		theta = theta - alpha * gradient
+		gradient = gradient_function(theta, X, y)
+	return theta
 ```
 
 
 
+### 最小二乘法
+
+- 用途：
+  - 函数拟合、求函数极值
+  - 优点：快
+  - 缺点：特征值过大时（阈值：10000）将消耗大量计算资源
+  - 局限性：
+    - 拟合函数若不是线性的，需要一些技巧转化成线性
+    - $X^T * X$的逆矩阵有可能不存在
+- 算法原理：
+  - <https://www.cnblogs.com/pinard/p/5976811.html>
+  - 矩阵求导：https://www.jianshu.com/p/4128e5b31fb4
+
 ```
->>> X
-array([[ 1.19304077],
-       [ 0.94091142],
-       [ 0.02339566],
-       [-0.8981732 ],
-       [ 0.09943588],
-       [ 0.00383871],
-       [-0.80779895],
-       [ 0.87421378],
-       [ 2.3114854 ],
-       [ 0.76986146],
-       [ 0.05000725],
-       [ 1.58109966],
-       [ 2.82690925],
-       [-0.96564311],
-       [-0.16234562],
-       [ 0.43630434],
-       [ 0.76292887],
-       [-2.69115914],
-       [-1.2516014 ],
-       [-1.65755253]])
->>> Y
-array([ 30.16130442,  36.19745451,  17.10101282,  -7.65571261,
-        26.76324042,  -5.03382704, -21.33951587,  22.67316442,
-        54.01695548,  23.33351057,   2.82356836,  25.49128867,
-        91.31885123, -25.95196596,  10.49228655,   4.74371435,
-         4.69407196, -90.81921826, -13.93506075, -34.20976885])
->>> coef
-array(24.821098110495655)
+def least_squares(X,Y):
+	X = np.mat(X)
+	Y = np.mat(Y)
+	theta = (X.T * X).I * X.T * Y
+	# Alternative: theta = X.I * X.T.I * X.T * Y
+	# 求逆矩阵的操作是计算瓶颈，经测试，原式子可能会比Alternative更快，但不明显
+	return theta
 ```
+
+- 非线性转化技巧：
+  - 若拟合曲线为$y = \theta_0 + \theta_1 * x + \theta_2 * x^2$，$X$矩阵可转换成$(x_0, x_1, x_2), x1 = x, x_2 = x^2$，$\theta$矩阵为$(\theta_0, \theta_1, \theta_2)$，如此类推。
+
+
+
+### 线性回归
+
+- 算法原理：https://www.cnblogs.com/pinard/p/6004041.html
+- 正则化：
+  - L1正则化：Lasso回归，$J(θ)=\frac{1}{2}(Xθ−Y)^{T}(Xθ−Y)+α||θ||_{1}$
+  - L2正则化：Ridge回归，$J(θ)=\frac{1}{2}(Xθ−Y)^{T}(Xθ−Y)+\frac{1}{2}α||θ||^{2}_{2}$
+- Python库：sklearn.linear_model.LinearRegression
+
+```
+from sklearn.linear_model import LinearRegression
+linreg = LinearRegression()
+linreg.fit(X_train, y_train)
+
+print linreg.intercept_, linreg.coef_
+```
+
+
+
+### Lasso回归
+
+
+
+
+
+### Ridge回归
+
+
+
+
+
+### 交叉验证
+
+- 用途：小规模数据训练优化选择模型
+- 分类：
+  - 简单交叉验证：多次随机切割样本，7成训练集/3成测试集
+  - S折交叉验证：n次(n<S)随机样本为S份，S-1份训练集/1份测试集
+  - 留一交叉验证：S折交叉验证的特例，S=样本数N，适用于样本数极少的情况
+
+```
+from sklearn.model_selection import train_test_split
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3, random_state=1)	# 简单交叉验证
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=1/S, random_state=2)	# S折交叉验证
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=1, random_state=101)	# 留一交叉验证
+```
+
+
 
 
 
@@ -126,6 +192,7 @@ array(24.821098110495655)
 
 - 用途：发觉频繁模式和关联规则
 - 算法原理：
+  - 核心是频繁项集和减枝
   - https://www.cnblogs.com/en-heng/p/5719101.html
   - https://stackabuse.com/association-rule-mining-via-apriori-algorithm-in-python/
 - Python库：Apyori
@@ -159,6 +226,7 @@ for row in result:
 
 - 用途：发掘频繁模式
 - 算法原理：
+  - 核心是构建频繁模式树
   - https://blog.csdn.net/baixiangxue/article/details/80335469
 - Python库：fp-growth
   - https://pypi.org/project/fp-growth/#description
@@ -177,6 +245,7 @@ for itemset in find_frequent_itemsets(transactions, minsup):
 
 - 用途：对特定类型数据源（低频繁度）效率会更佳
 - 算法原理：
+  - 核心是倒排思想，从水平数据格式转化成垂直数据格式，适合低频率密度场景，交运算是算法速率瓶颈
   - https://blog.csdn.net/my_learning_road/article/details/79728389
 - 算法实现：
   - http://adrem.uantwerpen.be/~goethals/software/
@@ -215,6 +284,7 @@ def eclat_frequent_itemsets(transactions, minsup):
 
 - 用途：挖掘多维数据的关联关系
 - 算法原理：
+  - 核心是协方差和奇异值分解
   - https://www.cnblogs.com/pinard/p/6288716.html
 - Python库：sklearn
   - sklearn.cross_decomposition.CCA
@@ -228,6 +298,7 @@ def eclat_frequent_itemsets(transactions, minsup):
 
 - 用途：可以用作分类，也可以用作回归
 - 算法原理：
+  - 核心是信息的度量——信息熵&基尼指数
   - https://www.cnblogs.com/pinard/p/6050306.html
   - 大杂烩：https://github.com/ljpzzz/machinelearning#8
 - 演进：
@@ -236,6 +307,9 @@ def eclat_frequent_itemsets(transactions, minsup):
   - BUG：sklearn只能进行数值型运算，不能处理字符串样本和结果，必须先进行样本序列化。
   - sklearn.tree.DecisionTreeClassifier
   - sklearn.tree.DecisionTreeRegressor
+- 实践心得：
+  - DTC与DTR的区别：DTC是基于gini指数，DTR是基于MSE（均方误差），DTR能很好地处理连续值，DTC实践中发现不能处理连续值
+  - 控制决策树的深度：在探索过程中，max_depth最好控制在3以下
 - 基础版本实现：
 
 ```
@@ -444,6 +518,7 @@ print X2
 
 - 用途：数据压缩和去噪，可用于特征分解、推荐算法、自然语言处理等
 - 原理：
+  - 核心是特征值和特征向量
   - SVD的性质：降序的奇异值矩阵减少特快，前10%甚至1%的奇异值的和就占了全部的奇异值之和的99%以上的比例。
   - https://www.cnblogs.com/pinard/p/6251584.html
 - 实现：
@@ -453,17 +528,19 @@ print X2
 import numpy as np
 
 x = [[1,1,1,0,0],[2,2,2,0,0],[1,1,1,0,0],[5,5,5,0,0],[1,1,0,2,2],[0,0,0,3,3],[0,0,0,1,1]]
-X = np.mat(x)
+X = np.mat(x)	# X = np.array(x)
 U, sigma, VT = np.linalg.svd(X)	#numpy计算出来的VT是V的转置
 
 #numpy计算出来的是Sigma矩阵的对角线压缩数组，要用diag函数还原
-zero_stack = np.zeros(len(V))
 S = np.diag(sigma)
-for i in range(len(V),len(U)):
-	S = np.row_stack((S,zero_stack))
-S = np.mat(S)
+for i in range(len(VT),len(U)):
+	S = np.row_stack((S,np.zeros(len(VT))))
+S = np.mat(S)	# S is already np.array type
 
 X_origin = U * S * VT	#还原原矩阵
 X_similar = U[:,0:3] * S[0:3,0:3] * VT[0:3,:]	#近似矩阵
-```
 
+# Alternative codes
+# X_orgin = np.dot(U,S).dot(VT)
+# X_similar = np.dot(U[:,0:3],S[0:3,0:3]).dot(VT[0:3,:])
+```
