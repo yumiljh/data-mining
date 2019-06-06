@@ -74,8 +74,8 @@ plt.scatter(X[:, 0], X[:, 1], marker='o', c=Y)
   - https://www.jianshu.com/p/c7e642877b0e
   - https://www.cnblogs.com/pinard/p/5970503.html
 - 分类：
-  - 批量梯度下降（）
-  - 随机梯度下降（）
+  - 批量梯度下降（BGD）
+  - 随机梯度下降（SGD）
   - 小批量梯度下降
 
 ```
@@ -115,7 +115,7 @@ def gradient_descent(init_theta, X, y, alpha, BGD_SGD = False):
   - 缺点：特征值过大时（阈值：10000）将消耗大量计算资源
   - 局限性：
     - 拟合函数若不是线性的，需要一些技巧转化成线性
-    - ![](http://latex.codecogs.com/gif.latex?X^T * X)的逆矩阵有可能不存在
+    - $X^T * X$的逆矩阵有可能不存在
 - 算法原理：
   - <https://www.cnblogs.com/pinard/p/5976811.html>
   - 矩阵求导：https://www.jianshu.com/p/4128e5b31fb4
